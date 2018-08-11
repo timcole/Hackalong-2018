@@ -57,3 +57,9 @@ From the server
  - `NEW_MESSAGE`
 	- Sent when there is a new message in the chat from either you or other members
 	- e.g. `{"type":"NEW_MESSAGE","data":{"message":"Kappa 123","username":"Testing321"}}`
+ - `MEMBER_JOIN`
+	- Sent when a new member joins the chat
+	- e.g. `{"type":"MEMBER_JOIN","data":{"username":"Testing321"}}`
+ - `MEMBER_LEAVE`
+	- Sent when a new member leaves the chat
+	- e.g. `{"type":"MEMBER_LEAVE","data":{"username":"Testing321"}}`

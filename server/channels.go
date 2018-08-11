@@ -83,6 +83,9 @@ func (c *Client) joinChannel() {
 	join.mutex.Unlock()
 
 	c.Send <- &OutgoingMessage{Type: typeJoinChannel, Data: &MessageData{Topic: join.Topic}}
+	for _, member := range c.Channel.Members {
+		member.Send <- &OutgoingMessage{Type: typeMemberJoin, Data: &MessageData{Username: c.Username}}
+	}
 }
 
 func (c *Client) leaveChannel() {
@@ -95,16 +98,23 @@ func (c *Client) leaveChannel() {
 	var tmpMembers []*Client
 	var members = c.Channel.Members
 	for i := range members {
-		members[len(members)-1], members[i] = members[i], members[len(members)-1]
-		tmpMembers = members[:len(members)-1]
+		if members[i] == c {
+			tmpMembers = append(members[:i], members[i+1:]...)
+			break
+		}
 	}
 	c.Channel.Members = tmpMembers
 	c.Channel.Slot++
+
+	for _, member := range c.Channel.Members {
+		member.Send <- &OutgoingMessage{Type: typeMemberLeave, Data: &MessageData{Username: c.Username}}
+	}
 
 	if len(c.Channel.Members) == 0 && c.Channel.Slot == 3 {
 		c.Channel.Slot = 0
 		go c.Connections.close(c.Channel)
 	}
+
 	c.Channel.mutex.Unlock()
 	c.Channel = nil
 
@@ -116,8 +126,10 @@ func (conns *Connections) close(channel *Channel) {
 	var tmpChannels []*Channel
 	var channels = conns.Channels
 	for i := range channels {
-		channels[len(channels)-1], channels[i] = channels[i], channels[len(channels)-1]
-		tmpChannels = channels[:len(channels)-1]
+		if channels[i] == channel {
+			tmpChannels = append(channels[:i], channels[i+1:]...)
+			break
+		}
 	}
 	conns.Channels = tmpChannels
 	conns.chanMutex.Unlock()

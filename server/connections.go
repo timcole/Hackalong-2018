@@ -57,6 +57,8 @@ const (
 	typeLeaveChannel  wsType = "LEAVE_CHANNEL"
 	typeSendMessage   wsType = "SEND_MESSAGE"
 	typeNewMessage    wsType = "NEW_MESSAGE"
+	typeMemberJoin    wsType = "MEMBER_JOIN"
+	typeMemberLeave   wsType = "MEMBER_LEAVE"
 )
 
 // MessageData is the message data
