@@ -70,6 +70,7 @@ type MessageData struct {
 	Username  string    `json:"username,omitempty"`
 	Vote      bool      `json:"vote,omitempty"`
 	Sender    *Client   `json:"member,omitempty"`
+	Members   []*Client `json:"members,omitempty"`
 	Timestamp time.Time `json:"timestamp,omitempty"`
 }
 

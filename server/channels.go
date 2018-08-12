@@ -25,7 +25,7 @@ func (c *Client) createChannel(msg ReceiveMessage) {
 
 	channel := &Channel{
 		Topic:    msg.Data.Topic,
-		Duration: time.Nanosecond,
+		Duration: time.Second,
 		Members:  []*Client{c},
 		Slot:     2,
 	}
@@ -35,9 +35,16 @@ func (c *Client) createChannel(msg ReceiveMessage) {
 	c.Connections.chanMutex.Unlock()
 	c.Channel = channel
 
+	go func() {
+		var dur = time.NewTicker(time.Second)
+		for range dur.C {
+			channel.Duration = channel.Duration + time.Second
+		}
+	}()
+
 	c.Vote = 1
 
-	c.Send <- &OutgoingMessage{Type: typeJoinChannel, Data: &MessageData{Timestamp: time.Now()}}
+	c.Send <- &OutgoingMessage{Type: typeJoinChannel, Data: &MessageData{Topic: channel.Topic, Members: channel.Members, Timestamp: time.Now()}}
 }
 
 func (c *Client) joinChannel() {
@@ -76,7 +83,7 @@ func (c *Client) joinChannel() {
 	join.mutex.Unlock()
 
 	c.Vote = 0
-	c.Send <- &OutgoingMessage{Type: typeJoinChannel, Data: &MessageData{Topic: join.Topic, Timestamp: time.Now()}}
+	c.Send <- &OutgoingMessage{Type: typeJoinChannel, Data: &MessageData{Topic: join.Topic, Members: join.Members, Timestamp: time.Now()}}
 
 	for _, msg := range c.Channel.History {
 		c.Send <- &OutgoingMessage{Type: typeNewMessage, Data: msg}
@@ -149,6 +156,12 @@ func (c *Client) sendMessage(msg ReceiveMessage) {
 	c.Channel.historyMutex.Lock()
 	c.Channel.History = append(c.Channel.History, storageMsg)
 	c.Channel.historyMutex.Unlock()
+
+	if len(c.Channel.History)%20 == 0 && c.Channel.Slot == 0 {
+		c.Channel.mutex.Lock()
+		c.Channel.Slot = c.Channel.Slot + 2
+		c.Channel.mutex.Unlock()
+	}
 
 	for _, member := range c.Channel.Members {
 		member.Send <- &OutgoingMessage{Type: typeNewMessage, Data: storageMsg}
