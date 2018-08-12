@@ -4,7 +4,11 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
+	"sort"
 
 	"github.com/gorilla/mux"
 )
@@ -50,6 +54,57 @@ func main() {
 			fmt.Println(err)
 		}
 		w.Write(data)
+	}).Methods("GET")
+
+	router.HandleFunc("/logs", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var files []os.FileInfo
+		filepath.Walk("logs/", func(path string, info os.FileInfo, err error) error {
+			if info.IsDir() {
+				return nil
+			}
+			files = append(files, info)
+			return nil
+		})
+		sort.Slice(files[:], func(i, j int) bool {
+			return files[i].Size() > files[j].Size()
+		})
+
+		var output []*Channel
+		var max = 5
+		if len(files) < 5 {
+			max = len(files)
+		}
+		for i := 0; i < max; i++ {
+			f, _ := ioutil.ReadFile("logs/" + files[i].Name())
+
+			channel := &Channel{}
+			json.Unmarshal(f, channel)
+			channel.Logfile = files[i].Name()
+			output = append(output, channel)
+		}
+
+		resp, err := json.Marshal(output)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		w.Write(resp)
+	}).Methods("GET")
+
+	router.HandleFunc("/logs/{filename:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		vars := mux.Vars(r)
+		filename := vars["filename"]
+
+		f, err := ioutil.ReadFile("logs/" + filename)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		w.Write(f)
 	}).Methods("GET")
 
 	fmt.Println("Starting " + *port)
