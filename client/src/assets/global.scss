@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css?family=Mouse+Memoirs');
+
+$red: #FF2E6A;
+$blue: #2EE1FF;
+$darkerRed: rgb(196, 36, 81);
+$darkerBlue: rgb(35, 179, 204);
+
+$thiccFont: 'Mouse Memoirs', sans-serif;
+
+
+body {
+    background: #efefef;
+}
+h1, h2, h3, h4 {
+    font-family: $thiccFont;
+}
+.container {
+    margin: auto;
+    max-width: 1200px;
+}
+.logo {
+    font-family: $thiccFont;
+    font-size: 60px;
+    margin-bottom: 40px;
+    span {
+        font-size: 1.5rem;
+    }
+}
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome and Opera */
+  }
+.dropshadow {
+    box-shadow: 7px 7px 0 rgb(223, 223, 223);
+}
+.skew {
+    transform: skewY(-0.5deg);
+    * {
+        transform: skewY(0.5deg);
+    }
+}
+.red {
+    background-color: $red;
+    box-shadow: 7px 7px 0 $darkerRed;
+    &:hover {
+        box-shadow: 8px 8px 0 $darkerRed;
+    }
+    &:active {
+        box-shadow: 5px 5px 0 $darkerRed;
+    }
+}
+.blue {
+    background-color: $blue;
+    box-shadow: 7px 7px 0 $darkerBlue;
+    &:hover {
+        box-shadow: 8px 8px 0 $darkerBlue;
+    }
+    &:active {
+        box-shadow: 5px 5px 0 $darkerBlue;
+    }
+}
+.button {
+    cursor: pointer;
+    margin-top: 20px;
+    display: inline-block;
+    padding: 10px 20px;
+    font-family: $thiccFont;
+    color: #fff;
+    font-size: 1.8rem;
+    transition: 200ms ease-in-out;
+
+    &:hover {
+        transform: translate(-1px, -1px) skewY(-0.5deg);
+    }
+    &:active {
+        transform: translate(2px, 2px) skewY(-0.5deg);
+    }
+}
+.biginput {
+    padding: 17px 10px;
+    width: 100%;
+    background: #fff;
+    font-weight: bold;
+    input {
+        border: none;
+        padding: 20px;
+        width: 90%;
+        font-size: 27px;
+        outline: none;
+        &::placeholder {
+            color: #cfcfcf;
+            font-weight: bold;
+        }
+    }
+}
