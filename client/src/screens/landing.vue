@@ -68,7 +68,10 @@ export default {
           }
 
           if (data.type === 'JOIN_CHANNEL') {
+            setTimeout(() => {
+            // document.getElementById('fuckThisShit').setAttribute("value", data.data.topic);
             this.$root.$emit('topic', data.data.topic)
+            }, 500)
             this.$router.push('/room')
           }
 

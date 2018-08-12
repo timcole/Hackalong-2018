@@ -5,8 +5,7 @@
     <router-link to="/"><div class="logo small">ChangeMyMind<span>.io</span></div></router-link>
 
     <div class="biginput dropshadow">
-        <input v-model="theTopic" type="text" disabled />
-        {{theTopic}}
+        <input id="fuckThisShit" v-model="theTopic" type="text" disabled />
         <div class="vote">
             <div :class="{'notselected': myVote === true }" @click="vote(false)" class="button dropshadow skew red"><span class="noselect"> <div class="fa fa-angle-down"/> </span></div>
             <div :class="{'notselected': myVote === false }" @click="vote(true)" class="button dropshadow skew blue "><span class="noselect"> <div class="fa fa-angle-up"/> </span></div>
@@ -56,11 +55,19 @@ import momentDurationFormatSetup from 'moment-duration-format'
 export default {
     mounted() {
 
+        const vm = this
+
         this.$root.$on('response', (response) => {
 
+            // console.log('Type: ', response.type)
+        
           if (response.type === 'JOIN_CHANNEL') {
-            this.setTheTopic(response.data.topic) 
-            console.log('THIS IS THE FUCKING TOPIC', this.theTopic)
+                console.log('setting the topic to: ' +  response.data.topic)
+              vm.theTopic = response.data.topic
+              console.log('it was set: ' +  vm.theTopic)
+              
+            // this.setTheTopic(response.data.topic) 
+            // console.log('THIS IS THE FUCKING TOPIC', this.theTopic)
           }
           if (response.type === 'NEW_MESSAGE') {
             response.data.type = "NEW_MESSAGE"
@@ -73,7 +80,6 @@ export default {
         })
         this.$root.$on('topic', (topic) => {
             this.theTopic = topic
-            console.log('EVENT: ', topic)
         })
 
 
