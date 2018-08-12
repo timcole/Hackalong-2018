@@ -28,11 +28,14 @@ func main() {
 	}).Methods("GET")
 
 	router.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Write([]byte("PONG"))
 	}).Methods("GET")
 
 	router.HandleFunc("/all", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
 		data, err := json.Marshal(connections.Channels)
 		if err != nil {
 			fmt.Println(err)
@@ -41,6 +44,7 @@ func main() {
 	}).Methods("GET")
 
 	router.HandleFunc("/stats", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json")
 
 		data, err := json.Marshal(struct {
@@ -57,6 +61,7 @@ func main() {
 	}).Methods("GET")
 
 	router.HandleFunc("/logs", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json")
 
 		var files []os.FileInfo
@@ -94,6 +99,7 @@ func main() {
 	}).Methods("GET")
 
 	router.HandleFunc("/logs/{filename:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json")
 		vars := mux.Vars(r)
 		filename := vars["filename"]
