@@ -1,8 +1,10 @@
 <template>
   <div id="app">
     <div class="stats_top">
-      <div class="stat"><i class="fa fa-user"/> {{stats.players}} Debaters</div>
-      <div class="stat"><i class="fa fa-comments"/> {{stats.channels}} Rooms</div>
+      <div class="stat"><i class="fa fa-user"/> {{stats.players < 2}} Debater</div>
+      <div class="stat"><i class="fa fa-comments"/> {{stats.channels < 2}} Room</div>
+      <div class="stat"><i class="fa fa-user"/> {{stats.players > 1}} Debaters</div>
+      <div class="stat"><i class="fa fa-comments"/> {{stats.channels > 1}} Rooms</div>
       </div> 
     <router-view/>
    </div>
