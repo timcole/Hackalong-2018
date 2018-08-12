@@ -2,6 +2,7 @@ package main
 
 import (
 	"sync"
+	"time"
 )
 
 // Connections are our connections
@@ -63,9 +64,11 @@ const (
 
 // MessageData is the message data
 type MessageData struct {
-	Topic    string `json:"topic,omitempty"`
-	Message  string `json:"message,omitempty"`
-	Username string `json:"username,omitempty"`
+	Topic     string    `json:"topic,omitempty"`
+	Message   string    `json:"message,omitempty"`
+	Username  string    `json:"username,omitempty"`
+	Sender    *Client   `json:"member,omitempty"`
+	Timestamp time.Time `json:"timestamp,omitempty"`
 }
 
 // ReceiveMessage is the message from clients

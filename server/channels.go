@@ -1,27 +1,20 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 	"sync"
 	"time"
 )
 
-// Message is structure for the message history
-type Message struct {
-	Sender    *Client `json:"member"`
-	Timestamp string  `json:"timestamp"`
-	Message   string  `json:"message"`
-}
-
 // Channel is the chatroom
 type Channel struct {
-	Topic    string        `json:"topic"`
-	Duration time.Duration `json:"duration"`
-	Members  []*Client     `json:"members"`
-	History  []*Message    `json:"history"`
-	Slot     int           `json:"slots"`
-	mutex    sync.Mutex
+	Topic        string         `json:"topic"`
+	Duration     time.Duration  `json:"duration"`
+	Members      []*Client      `json:"members"`
+	History      []*MessageData `json:"history"`
+	historyMutex sync.Mutex
+	Slot         int `json:"slots"`
+	mutex        sync.Mutex
 }
 
 func (c *Client) createChannel(msg ReceiveMessage) {
@@ -42,7 +35,7 @@ func (c *Client) createChannel(msg ReceiveMessage) {
 	c.Connections.chanMutex.Unlock()
 	c.Channel = channel
 
-	fmt.Println(c.Connections.Channels, len(c.Connections.Channels))
+	c.Vote = 1
 
 	c.Send <- &OutgoingMessage{Type: typeJoinChannel}
 }
@@ -82,7 +75,13 @@ func (c *Client) joinChannel() {
 	join.Slot--
 	join.mutex.Unlock()
 
+	c.Vote = 0
 	c.Send <- &OutgoingMessage{Type: typeJoinChannel, Data: &MessageData{Topic: join.Topic}}
+
+	for _, msg := range c.Channel.History {
+		c.Send <- &OutgoingMessage{Type: typeNewMessage, Data: msg}
+	}
+
 	for _, member := range c.Channel.Members {
 		member.Send <- &OutgoingMessage{Type: typeMemberJoin, Data: &MessageData{Username: c.Username}}
 	}
@@ -146,7 +145,12 @@ func (c *Client) sendMessage(msg ReceiveMessage) {
 		return
 	}
 
+	var storageMsg = &MessageData{Message: msg.Data.Message, Timestamp: time.Now(), Sender: c}
+	c.Channel.historyMutex.Lock()
+	c.Channel.History = append(c.Channel.History, storageMsg)
+	c.Channel.historyMutex.Unlock()
+
 	for _, member := range c.Channel.Members {
-		member.Send <- &OutgoingMessage{Type: typeNewMessage, Data: &MessageData{Message: msg.Data.Message, Username: c.Username}}
+		member.Send <- &OutgoingMessage{Type: typeNewMessage, Data: storageMsg}
 	}
 }

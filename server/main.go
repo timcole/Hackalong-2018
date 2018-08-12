@@ -33,6 +33,22 @@ func main() {
 		w.Write(data)
 	}).Methods("GET")
 
+	router.HandleFunc("/stats", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		data, err := json.Marshal(struct {
+			Players  int `json:"players"`
+			Channels int `json:"channels"`
+		}{
+			Players:  len(connections.Clients),
+			Channels: len(connections.Channels),
+		})
+		if err != nil {
+			fmt.Println(err)
+		}
+		w.Write(data)
+	}).Methods("GET")
+
 	fmt.Println("Starting :80")
 	panic(http.ListenAndServe(":80", router))
 }
