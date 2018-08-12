@@ -99,17 +99,16 @@ a, a:active a:hover {
     width: 100%;
     padding: 0 10px;
     display: flex;
-    height: 250px;
+    height: 180px;
     margin-top: 60px;
+    margin-bottom: 30px;
     position: absolute;
     left: 0;
     bottom: 0;
-    overflow-y: hidden; 
-    overflow-x: scroll; 
     
     * {
-        width: 240px;
-        height: 219px;
+        width: 180px;
+        height: 180px;
         color: #fff;
         font-size: 2.6rem;
         text-align: left;
@@ -128,6 +127,20 @@ a, a:active a:hover {
     //     background-color: $red !important;
     //     box-shadow: 7px 7px 0 $darkerRed !important;
     // }
+}
+.stats_top {
+    position: absolute;
+    top:10px;
+    right: 10px;
+    color: #fff;
+    font-size: 11px;
+    display: flex;
+    .stat {
+        border-radius: 5px;
+        background: #b1b1b1;
+        padding: 5px 10px;
+        margin: 0 3px;
+    }
 }
 .button {
     cursor: pointer;

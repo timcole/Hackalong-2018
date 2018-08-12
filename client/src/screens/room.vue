@@ -24,17 +24,17 @@
                 <div class="timestamp">{{niceTime(new Date())}}</div><div style="margin-left: 24px" class=" message"> Welcome to the chat!</div>
             </div>
             <div v-for="(i, index) in messages" :key="index">
-                <div v-if="i.type === 'NEW_MESSAGE'" class="message_body">
+                <div v-if="i.type === 'MEMBER_JOIN'" class="message_body member_join alert_message">
+                    <div class="timestamp">{{niceTime(i.timestamp)}}</div>
+                    <div class="username">{{i.username}}</div>
+                    <div class="message">has joined the debate</div>
+                </div>
+                 <div v-else class="message_body">
                     <div class="timestamp">{{niceTime(i.timestamp)}}</div>
 
                     <div :class="{'redText': i.member.vote === -1, 'blueText': i.member.vote === 1 }" class="username">{{i.member.username}}</div>
 
                     <div class="message">{{i.message}}</div>
-                </div>
-                <div v-if="i.type === 'MEMBER_JOIN'" class="message_body member_join alert_message">
-                    <div class="timestamp">{{niceTime(i.timestamp)}}</div>
-                    <div class="username">{{i.username}}</div>
-                    <div class="message">has joined the debate</div>
                 </div>
             </div>
             <div class="bottom_padding"></div>
@@ -108,23 +108,17 @@ export default {
 
 
 
-            
-
-
-
-    },
-    created() {
-        console.log(window.dummy)
-        setTimeout(() => {
-            if (window.dummy) {
+          if (window.dummy) {
                 this.dummy = true
                 this.members = window.dummy.members
                 this.messages = window.dummy.history
                 this.theTopic = window.dummy.topic
-            }
-        },500)
+            }  
+
+
 
     },
+
     data() {
         return {
             socket: null,
@@ -284,8 +278,6 @@ export default {
         text-align: left;
     line-height: 28px;
     padding-right: 60px;
-    * {
-    }
     .username {
      font-size: 1.3rem;
     font-weight: bold;
