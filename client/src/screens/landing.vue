@@ -52,7 +52,7 @@ export default {
         }))
 
     // esablish connection with socket
-    this.socket = new WebSocket('wss://56ce6fe7.ngrok.io/ws');
+    this.socket = new WebSocket('wss://api.changemymind.io/ws');
     this.socket.addEventListener('open', event => {
       console.log(`Connection established via socket`);
       this.connectionAlive = true

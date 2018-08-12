@@ -86,10 +86,11 @@ export default {
             this.messages.push(response.data)
             this.members.push(response.data)
           }
+          // WHEN A MEMBER LEAVES
           if (response.type === 'MEMBER_LEAVE') {
             response.data.type = "MEMBER_JOIN" // used to render a style in the DOM
             this.messages.push(response.data)
-            this.members = this.members.filter(member => !member.username === response.data.username)
+            this.members = this.members.filter(member => member.username !== response.data.username)
           }
           if (response.type === 'VOTE') {
             this.members = this.members.map(member => {
@@ -244,6 +245,9 @@ export default {
     .connected_users {
     position: fixed;
     right: 90px;
+        display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     }
 }
 
