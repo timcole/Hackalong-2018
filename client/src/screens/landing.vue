@@ -52,7 +52,7 @@ export default {
         }))
 
     // esablish connection with socket
-    this.socket = new WebSocket('wss://56ce6fe7.ngrok.io/ws');
+    this.socket = new WebSocket('wss://api.changemymind.io/ws');
     this.socket.addEventListener('open', event => {
       console.log(`Connection established via socket`);
       this.connectionAlive = true
@@ -70,8 +70,8 @@ export default {
           if (data.type === 'JOIN_CHANNEL') {
             setTimeout(() => {
             // document.getElementById('fuckThisShit').setAttribute("value", data.data.topic);
-            this.$root.$emit('topic', data.data.topic)
-            }, 500)
+            this.$root.$emit('roomData', data.data)
+            }, 0)
             this.$router.push('/room')
           }
 
