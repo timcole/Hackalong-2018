@@ -82,6 +82,11 @@ func (c *Client) read() {
 			}(c, newMsg)
 		case typeVote:
 			go func(c *Client, newMsg ReceiveMessage) {
+				if c.Channel == nil {
+					c.Send <- &OutgoingMessage{Type: typeVote, Error: errUnauthorized}
+					return
+				}
+
 				vote := -1
 				if newMsg.Data.Vote {
 					vote = 1

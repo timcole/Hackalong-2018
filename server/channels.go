@@ -1,13 +1,18 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"math/rand"
+	"os"
+	"strconv"
 	"sync"
 	"time"
 )
 
 // Channel is the chatroom
 type Channel struct {
+	Logfile      string         `json:"logfile,omitempty"`
 	Topic        string         `json:"topic"`
 	Duration     time.Duration  `json:"duration"`
 	Members      []*Client      `json:"members"`
@@ -137,6 +142,16 @@ func (conns *Connections) close(channel *Channel) {
 			break
 		}
 	}
+
+	f, err := os.Create("logs/" + strconv.FormatInt(time.Now().Unix(), 10))
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer f.Close()
+
+	hs, _ := json.Marshal(channel)
+	f.Write(hs)
+
 	conns.Channels = tmpChannels
 	conns.chanMutex.Unlock()
 }
