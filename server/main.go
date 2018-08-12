@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net/http"
 
@@ -10,9 +11,11 @@ import (
 
 var (
 	connections = NewConnections()
+	port        = flag.String("port", ":80", "Server port")
 )
 
 func main() {
+	flag.Parse()
 	go connections.Run()
 	router := mux.NewRouter()
 
@@ -49,6 +52,6 @@ func main() {
 		w.Write(data)
 	}).Methods("GET")
 
-	fmt.Println("Starting :80")
-	panic(http.ListenAndServe(":80", router))
+	fmt.Println("Starting " + *port)
+	panic(http.ListenAndServe(*port, router))
 }
