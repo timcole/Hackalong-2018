@@ -42,6 +42,9 @@ To the server
  - `SEND_MESSAGE` Requires `data.message`
 	- Sends a message in the active channel
 	- e.g. `{"type":"SEND_MESSAGE", "data": { "message": "Kappa 123" }}`
+ - `VOTE` Requires `data.vote` (bool - true is for - false is against)
+	- Updates the user option on the topic
+	- e.g. `{"type":"VOTE", "data": {"vote": true}}`
 
 From the server
  - `SET_USERNAME`
@@ -63,3 +66,7 @@ From the server
  - `MEMBER_LEAVE`
 	- Sent when a new member leaves the chat
 	- e.g. `{"type":"MEMBER_LEAVE","data":{"username":"Testing321"}}`
+ - `VOTE`
+	- Sent when a user updates their option
+	- 1 is for - 0 is no vote yet - -1 is against
+	- e.g. `{"type":"VOTE","data":{"member":{"username":"Testing123","vote":-1},"timestamp":"2018-08-11T22:43:29.3425895-04:00"}}`
