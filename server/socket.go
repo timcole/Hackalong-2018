@@ -10,7 +10,6 @@ import (
 )
 
 const (
-	timeout    = 5 * time.Minute
 	maxMessage = 1028
 )
 
@@ -56,18 +55,15 @@ func (c *Client) read() {
 	}()
 
 	c.Conn.SetReadLimit(maxMessage)
-	c.Conn.SetPongHandler(func(string) error {
-		c.Conn.SetReadDeadline(time.Now().Add(timeout))
-		return nil
-	})
 
 	for {
 		newMsg := ReceiveMessage{}
 		err := c.Conn.ReadJSON(&newMsg)
 		if err != nil {
-			if websocket.IsCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+			if websocket.IsCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) ||
+				websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				fmt.Println("Client Read Error:", err)
-				break
+				return
 			}
 			c.Send <- &OutgoingMessage{Type: typeResponse, Error: errBadMessage}
 		}
@@ -109,9 +105,7 @@ func (c *Client) read() {
 }
 
 func (c *Client) write() {
-	keepAlive := time.NewTicker(timeout)
 	defer func() {
-		keepAlive.Stop()
 		c.Conn.Close()
 	}()
 
@@ -123,10 +117,6 @@ func (c *Client) write() {
 				return
 			}
 			c.Conn.WriteJSON(msg)
-		case <-keepAlive.C:
-			if err := c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				return
-			}
 		}
 	}
 }
