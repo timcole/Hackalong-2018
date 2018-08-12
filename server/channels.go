@@ -19,7 +19,7 @@ type Channel struct {
 
 func (c *Client) createChannel(msg ReceiveMessage) {
 	if c.Channel != nil || c.Username == "" {
-		c.Send <- &OutgoingMessage{Type: typeResponse, Error: errUnauthorized}
+		c.Send <- &OutgoingMessage{Type: typeResponse, Error: errUnauthorized, Data: &MessageData{Timestamp: time.Now()}}
 		return
 	}
 
@@ -37,12 +37,12 @@ func (c *Client) createChannel(msg ReceiveMessage) {
 
 	c.Vote = 1
 
-	c.Send <- &OutgoingMessage{Type: typeJoinChannel}
+	c.Send <- &OutgoingMessage{Type: typeJoinChannel, Data: &MessageData{Timestamp: time.Now()}}
 }
 
 func (c *Client) joinChannel() {
 	if c.Username == "" {
-		c.Send <- &OutgoingMessage{Type: typeResponse, Error: errUnauthorized}
+		c.Send <- &OutgoingMessage{Type: typeResponse, Error: errUnauthorized, Data: &MessageData{Timestamp: time.Now()}}
 		return
 	}
 
@@ -57,7 +57,7 @@ func (c *Client) joinChannel() {
 	}
 
 	if len(openChannels) == 0 {
-		c.Send <- &OutgoingMessage{Type: typeResponse, Error: errNoChannels}
+		c.Send <- &OutgoingMessage{Type: typeResponse, Error: errNoChannels, Data: &MessageData{Timestamp: time.Now()}}
 		return
 	}
 
@@ -76,20 +76,20 @@ func (c *Client) joinChannel() {
 	join.mutex.Unlock()
 
 	c.Vote = 0
-	c.Send <- &OutgoingMessage{Type: typeJoinChannel, Data: &MessageData{Topic: join.Topic}}
+	c.Send <- &OutgoingMessage{Type: typeJoinChannel, Data: &MessageData{Topic: join.Topic, Timestamp: time.Now()}}
 
 	for _, msg := range c.Channel.History {
 		c.Send <- &OutgoingMessage{Type: typeNewMessage, Data: msg}
 	}
 
 	for _, member := range c.Channel.Members {
-		member.Send <- &OutgoingMessage{Type: typeMemberJoin, Data: &MessageData{Username: c.Username}}
+		member.Send <- &OutgoingMessage{Type: typeMemberJoin, Data: &MessageData{Username: c.Username, Timestamp: time.Now()}}
 	}
 }
 
 func (c *Client) leaveChannel() {
 	if c.Channel == nil {
-		c.Send <- &OutgoingMessage{Type: typeResponse, Error: errNoChannels}
+		c.Send <- &OutgoingMessage{Type: typeResponse, Error: errNoChannels, Data: &MessageData{Timestamp: time.Now()}}
 		return
 	}
 
@@ -106,7 +106,7 @@ func (c *Client) leaveChannel() {
 	c.Channel.Slot++
 
 	for _, member := range c.Channel.Members {
-		member.Send <- &OutgoingMessage{Type: typeMemberLeave, Data: &MessageData{Username: c.Username}}
+		member.Send <- &OutgoingMessage{Type: typeMemberLeave, Data: &MessageData{Username: c.Username, Timestamp: time.Now()}}
 	}
 
 	if len(c.Channel.Members) == 0 && c.Channel.Slot == 3 {
@@ -117,7 +117,7 @@ func (c *Client) leaveChannel() {
 	c.Channel.mutex.Unlock()
 	c.Channel = nil
 
-	c.Send <- &OutgoingMessage{Type: typeLeaveChannel}
+	c.Send <- &OutgoingMessage{Type: typeLeaveChannel, Data: &MessageData{Timestamp: time.Now()}}
 }
 
 func (conns *Connections) close(channel *Channel) {
@@ -136,12 +136,12 @@ func (conns *Connections) close(channel *Channel) {
 
 func (c *Client) sendMessage(msg ReceiveMessage) {
 	if c.Channel == nil || c.Username == "" {
-		c.Send <- &OutgoingMessage{Type: typeResponse, Error: errUnauthorized}
+		c.Send <- &OutgoingMessage{Type: typeResponse, Error: errUnauthorized, Data: &MessageData{Timestamp: time.Now()}}
 		return
 	}
 
 	if msg.Data.Message == "" {
-		c.Send <- &OutgoingMessage{Type: typeResponse, Error: errBadMessage}
+		c.Send <- &OutgoingMessage{Type: typeResponse, Error: errBadMessage, Data: &MessageData{Timestamp: time.Now()}}
 		return
 	}
 

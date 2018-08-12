@@ -60,6 +60,7 @@ const (
 	typeNewMessage    wsType = "NEW_MESSAGE"
 	typeMemberJoin    wsType = "MEMBER_JOIN"
 	typeMemberLeave   wsType = "MEMBER_LEAVE"
+	typeVote          wsType = "VOTE"
 )
 
 // MessageData is the message data
@@ -67,6 +68,7 @@ type MessageData struct {
 	Topic     string    `json:"topic,omitempty"`
 	Message   string    `json:"message,omitempty"`
 	Username  string    `json:"username,omitempty"`
+	Vote      bool      `json:"vote,omitempty"`
 	Sender    *Client   `json:"member,omitempty"`
 	Timestamp time.Time `json:"timestamp,omitempty"`
 }

@@ -82,7 +82,19 @@ func (c *Client) read() {
 					return
 				}
 				c.Username = newMsg.Data.Username
-				c.Send <- &OutgoingMessage{Type: typeSetUsername, Data: &MessageData{Message: "Username set to " + c.Username}}
+				c.Send <- &OutgoingMessage{Type: typeSetUsername, Data: &MessageData{Message: "Username set to " + c.Username, Timestamp: time.Now()}}
+			}(c, newMsg)
+		case typeVote:
+			go func(c *Client, newMsg ReceiveMessage) {
+				vote := -1
+				if newMsg.Data.Vote {
+					vote = 1
+				}
+				c.Vote = vote
+
+				for _, member := range c.Channel.Members {
+					member.Send <- &OutgoingMessage{Type: typeVote, Data: &MessageData{Sender: c, Timestamp: time.Now()}}
+				}
 			}(c, newMsg)
 		case typeCreateChannel:
 			go c.createChannel(newMsg)
