@@ -63,13 +63,13 @@ a, a:active a:hover {
     }
 }
 .red {
-    background-color: $red;
-    box-shadow: 7px 7px 0 $darkerRed;
+    background-color: $red !important;
+    box-shadow: 7px 7px 0 $darkerRed !important;
     &:hover {
-        box-shadow: 8px 8px 0 $darkerRed;
+        box-shadow: 8px 8px 0 $darkerRed !important;
     }
     &:active {
-        box-shadow: 5px 5px 0 $darkerRed;
+        box-shadow: 5px 5px 0 $darkerRed !important;
     }
 }
 .blue {

@@ -5,12 +5,18 @@
     <router-link to="/"><div class="logo small">ChangeMyMind<span>.io</span></div></router-link>
 
     <div class="biginput dropshadow">
-        <input type="text" disabled :value="topic"/>
+        <input v-model="theTopic" type="text" disabled />
+        {{theTopic}}
         <div class="vote">
             <div :class="{'notselected': myVote === true }" @click="vote(false)" class="button dropshadow skew red"><span class="noselect"> <div class="fa fa-angle-down"/> </span></div>
             <div :class="{'notselected': myVote === false }" @click="vote(true)" class="button dropshadow skew blue "><span class="noselect"> <div class="fa fa-angle-up"/> </span></div>
         <!-- add notselected class when user has made selection -->
         </div>
+    </div>
+
+    <div class="bar">
+        <div v-bind:style="{width: percentFor + '%'}" class="dropshadow blue"><div>{{percentFor}}%</div></div>
+        <div v-bind:style="{width: 100 - percentFor + '%'}" class="dropshadow red"><div>{{100 - percentFor}}%</div></div>
     </div>
 
     <div class="message_container dropshadow">
@@ -35,6 +41,8 @@
     </div>
     <div class="dropshadow biginput messageBox">
       <input v-shortkey="['enter']" @shortkey="sendMessage()" v-model="message" type="text" placeholder="Be rational... or not."/>
+    <div :class="{'red': myVote === false }" @click="sendMessage()" class="button send_button dropshadow skew blue"><span class="noselect"> SEND </span></div>
+
     </div>
     
 
@@ -49,8 +57,10 @@ export default {
     mounted() {
 
         this.$root.$on('response', (response) => {
+
           if (response.type === 'JOIN_CHANNEL') {
-            this.topic = response.data.topic
+            this.setTheTopic(response.data.topic) 
+            console.log('THIS IS THE FUCKING TOPIC', this.theTopic)
           }
           if (response.type === 'NEW_MESSAGE') {
             response.data.type = "NEW_MESSAGE"
@@ -61,18 +71,28 @@ export default {
             this.messages.push(response.data)
           }
         })
+        this.$root.$on('topic', (topic) => {
+            this.theTopic = topic
+            console.log('EVENT: ', topic)
+        })
+
 
     },
     data() {
         return {
             socket: null,
-            topic: '',
+            theTopic: '',
             message: '',
             messages: [],
-            myVote: null
+            myVote: null,
+            percentFor: 41
         }
     },
     methods: {
+        setTheTopic(topic) {
+            this.theTopic = topic
+            console.log('we set the topic!')
+        },
         sendMessage() {
             if (this.message.length < 1) return false
           window.socket.send(JSON.stringify({
@@ -158,8 +178,9 @@ export default {
     background: #f9f9f9;
     padding: 20px 0;
     width: 100%;
-    height: calc(100vh - 360px);
-    overflow: scroll;
+    height: calc(100vh - 390px);
+        overflow-y: scroll;
+    overflow-x: hidden;
     * {
         box-sizing: border-box;
     }
@@ -203,6 +224,30 @@ height: 50px;
     padding: 0;
     input {
         background: #f1f1f1 !important
+    }
+}
+.send_button {
+    position: absolute;
+    top: -16px;
+    right: 15px;
+}
+.bar {
+    width: 100%;
+    z-index: 999;
+    margin-top: 20px;
+    *:hover {
+
+    }
+    * {
+        height: 37px;
+        float: left;
+        display: flex;
+        div {
+            line-height: 2.3rem;
+            color: #fff;
+            margin: auto;
+            font-weight: bold;
+        }
     }
 }
 </style>

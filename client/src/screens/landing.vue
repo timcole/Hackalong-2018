@@ -68,6 +68,7 @@ export default {
           }
 
           if (data.type === 'JOIN_CHANNEL') {
+            this.$root.$emit('topic', data.data.topic)
             this.$router.push('/room')
           }
 
