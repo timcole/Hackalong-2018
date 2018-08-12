@@ -2,8 +2,10 @@
 
 $red: #FF2E6A;
 $blue: #2EE1FF;
+$grey: rgb(206, 206, 206);
 $darkerRed: rgb(196, 36, 81);
 $darkerBlue: rgb(35, 179, 204);
+$darkerGrey: rgb(126, 126, 126);
 
 $thiccFont: 'Mouse Memoirs', sans-serif;
 
@@ -27,7 +29,7 @@ a, a:active a:hover {
 .container {
     margin: auto;
     max-width: 1200px;
-    position: relative;
+    // position: relative;
 }
 .logo {
     font-family: $thiccFont;
@@ -62,6 +64,7 @@ a, a:active a:hover {
         transform: skewY(0.5deg);
     }
 }
+
 .red {
     background-color: $red !important;
     box-shadow: 7px 7px 0 $darkerRed !important;
@@ -70,6 +73,16 @@ a, a:active a:hover {
     }
     &:active {
         box-shadow: 5px 5px 0 $darkerRed !important;
+    }
+}
+.grey {
+    background-color: $grey !important;
+    box-shadow: 7px 7px 0 $darkerGrey !important;
+    &:hover {
+        box-shadow: 8px 8px 0 $darkerGrey !important;
+    }
+    &:active {
+        box-shadow: 5px 5px 0 $darkerGrey !important;
     }
 }
 .blue {
@@ -81,6 +94,40 @@ a, a:active a:hover {
     &:active {
         box-shadow: 5px 5px 0 $darkerBlue;
     }
+}
+.other {
+    width: 100%;
+    padding: 0 10px;
+    display: flex;
+    height: 250px;
+    margin-top: 60px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    overflow-y: hidden; 
+    overflow-x: scroll; 
+    
+    * {
+        width: 240px;
+        height: 219px;
+        color: #fff;
+        font-size: 2.6rem;
+        text-align: left;
+        padding: 0;
+        margin-right: 46px;
+        cursor: pointer;
+        * {
+            padding: 5px;
+            margin-top: 0;
+            margin-left: 5px;
+            padding-right: 20px;
+        }
+    }
+    // :nth-child(even) {
+    //     opacity: 0.5;
+    //     background-color: $red !important;
+    //     box-shadow: 7px 7px 0 $darkerRed !important;
+    // }
 }
 .button {
     cursor: pointer;

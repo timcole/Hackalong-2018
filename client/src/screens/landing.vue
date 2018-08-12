@@ -34,6 +34,15 @@
    </div>
 
 
+   <div class="other">
+       <div v-for="(i, index) in logs" :key="index">
+           <div @click="openDummy(i)" class="dropshadow skew blue">
+               <h1>{{i.topic}}</h1>
+           </div>
+       </div>
+   </div>
+
+
 
 
 
@@ -86,6 +95,16 @@ export default {
 
     window.socket = this.socket
 
+  
+
+  fetch('https://api.changemymind.io/logs')
+  .then((response) => {
+    return response.json();
+  })
+  .then((logs) => {
+    console.log(logs);
+    this.logs = logs
+  });
 
   },
   data() {
@@ -96,12 +115,15 @@ export default {
       question: '',
       usernameModal: false,
       whatAreWeDoing: false, // JOIN, CREATE
-
-
+      logs: []
     }
   },
 
     methods: {
+        openDummy(i) {
+            window.dummy = i
+            this.$router.push('/room')
+        },
       createRoomButton() {
         if (this.question.length < 3) return false
         this.whatAreWeDoing = 'CREATE'

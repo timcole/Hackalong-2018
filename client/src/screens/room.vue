@@ -41,11 +41,11 @@
         </div>
         <div class="connected_users">
             <div v-for="(i, index) in members" :key="index"> 
-                <div :class="{'red': i.vote === -1}" class="button dropshadow skew blue"><span class="noselect"> {{i.username}} </span></div>
+                <div :class="{'red': i.vote === -1, 'grey': i.vote === 0}" class="button dropshadow skew blue"><span class="noselect"> {{i.username}} </span></div>
             </div>
         </div>
     </div>
-    <div class="dropshadow biginput messageBox">
+    <div v-if="!dummy" class="dropshadow biginput messageBox">
       <input v-shortkey="['enter']" @shortkey="sendMessage()" v-model="message" type="text" placeholder="Be rational... or not."/>
     <div :class="{'red': myVote === false }" @click="sendMessage()" class="button send_button dropshadow skew blue"><span class="noselect"> SEND </span></div>
 
@@ -61,6 +61,8 @@ import momentDurationFormatSetup from 'moment-duration-format'
 
 export default {
     mounted() {
+
+
 
         const vm = this
 
@@ -105,6 +107,23 @@ export default {
         })
 
 
+
+            
+
+
+
+    },
+    created() {
+        console.log(window.dummy)
+        setTimeout(() => {
+            if (window.dummy) {
+                this.dummy = true
+                this.members = window.dummy.members
+                this.messages = window.dummy.history
+                this.theTopic = window.dummy.topic
+            }
+        },500)
+
     },
     data() {
         return {
@@ -115,7 +134,8 @@ export default {
             myVote: null,
             percentFor: 41,
             members: [],
-            hideRightBar: true
+            hideRightBar: true,
+            dummy: false
         }
     },
     methods: {
@@ -214,7 +234,6 @@ export default {
     background-color: #f5f5f5;
 }
 .room {
-
     .logo {
         margin: 18px 0px;
     }
@@ -244,10 +263,16 @@ export default {
     }
     .connected_users {
     position: fixed;
-    right: 90px;
+    right: 50px;
         display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-end; 
+    * {
+            font-size: 19px;
+    padding: 3px 20px;
+    box-shadow: none !important;
+    margin: 0px;
+    }
     }
 }
 
@@ -280,7 +305,7 @@ export default {
     }
 }
 .bottom_padding {
-height: 70px;
+height: 100px;
 }
 .messageBox {
     margin: auto;
